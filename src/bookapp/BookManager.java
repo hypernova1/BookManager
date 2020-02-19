@@ -7,11 +7,11 @@ import java.util.Scanner;
 public class BookManager {
 
 	private Scanner scanner = new Scanner(System.in);
-	private final List<Book> books;
+	private BookRepository bookRepository;
 	private final List<BookRentalLog> bookRentalLogs;
 
 	public BookManager() {
-		this.books = new ArrayList<>();
+		this.bookRepository = new BookRepository();
 		this.bookRentalLogs = new ArrayList<>();
 	}
 
@@ -29,14 +29,18 @@ public class BookManager {
 				System.out.println("장르 번호 입력 [1. 시 | 2. 소설 | 3. 만화]> ");
 				genre = scanner.nextInt();
 
+				if (genre > 3 || genre < 1) throw new Exception();
+
 				book.setTitle(title);
 				book.setWriter(writer);
 				book.setGenre(genre);
 
 				System.out.println("도서 등록 정보");
-				System.out.println("==========================================================");
+				System.out.println("========================================================================");
+				System.out.println();
 				System.out.println(book.toString());
-				System.out.println("==========================================================");
+				System.out.println();
+				System.out.println("========================================================================");
 
 				String isRegister;
 				while (true) {
@@ -52,7 +56,7 @@ public class BookManager {
 					System.out.println("도서를 등록하지 않았습니다.");
 					return;
 				}
-				books.add(book);
+				bookRepository.save(book);
 				System.out.println("도서가 등록되었습니다.");
 				break;
 			} catch (Exception e) {
@@ -63,27 +67,53 @@ public class BookManager {
 	}
 
 	public void _return() {
+		while(true) {
+			try {
+				List<Book> byAvailable = bookRepository.findByAvailable(false);
+				if (byAvailable == null) {
+					System.out.println("대여중인 도서가 없습니다.");
+					return;
+				}
+				print(byAvailable);
+				System.out.println("반납할 도서의 id를 입력하세요. 모두 반납하시려면 'all'라고 입력해주세요");
+				String selected = scanner.next();
 
+				if (selected.equals("all")) {
+					for (Book book : byAvailable) {
+						book.setAvailable(true);
+					}
+					System.out.println("모든 책이 반납되었습니다.");
+					return;
+				}
+
+				int selectedId = Integer.parseInt(selected);
+				Book byId = bookRepository.findById(selectedId);
+				if (byId.isAvailable()) {
+					System.out.println("반납할 수 없는 도서입니다.");
+					continue;
+				}
+				System.out.println("반납이 완료되었습니다.");
+				return;
+			} catch (Exception e) {
+				System.out.println("잘못된 값이 입력되었습니다.");
+				scanner = new Scanner(System.in);
+			}
+
+		}
 	}
 
-	public void printList() {
+	public void print(List<Book> books) {
 		if (books.size() == 0) {
-			System.out.println("도서 목록이 없습니다. 도서를 등록 후 사용해주세요.");
+			System.out.println("도서 목록이 없습니다.");
 			return;
 		}
-		System.out.println("==========================================================");
+		System.out.println("========================================================================");
+		System.out.println();
 		for (Book book : books) {
 			System.out.println(book.toString());
 		}
-		System.out.println("==========================================================");
-	}
-
-	public void rental() {
-
-	}
-
-	public void remove() {
-
+		System.out.println();
+		System.out.println("========================================================================");
 	}
 
 	public void printRentalLog() {
@@ -91,11 +121,116 @@ public class BookManager {
 			System.out.println("대여 이력이 없습니다.");
 			return;
 		}
-		System.out.println("==========================================================");
-		for (BookRentalLog rentalLog : bookRentalLogs) {
-			System.out.println(rentalLog.toString());
+		System.out.println("========================================================================");
+		System.out.println();
+		for (BookRentalLog bookRentalLog : bookRentalLogs) {
+			System.out.println(bookRentalLog.toString());
 		}
-		System.out.println("==========================================================");
+		System.out.println();
+		System.out.println("========================================================================");
+	}
+
+	public void rental() {
+		while (true) {
+			try {
+				System.out.println("대여할 도서의 도서번호를 입력해주세요.");
+				int selectedId = scanner.nextInt();
+				Book book = bookRepository.findById(selectedId);
+
+				if (book == null) {
+					System.out.println("해당 도서가 존재하지 않습니다.");
+					continue;
+				}
+
+				if (!book.isAvailable()) {
+					System.out.println("이미 대여중인 도서입니다.");
+					continue;
+				}
+				book.setAvailable(false);
+
+				System.out.println(book.getTitle() + "를 대여했습니다.");
+				BookRentalLog bookRentalLog = new BookRentalLog();
+				bookRentalLog.set(book);
+				bookRentalLogs.add(bookRentalLog);
+				return;
+			} catch (Exception e) {
+				System.out.println("잘못된 값이 입력되었습니다.");
+				scanner = new Scanner(System.in);
+			}
+		}
+	}
+
+	public void remove() {
+		System.out.println("삭제할 도서의 id를 입력해주세요.");
+		try {
+			int id = scanner.nextInt();
+			Book byId = bookRepository.findById(id);
+			if (byId == null) {
+				System.out.println("헤당 id 값과 일치하는 도서가 없습니다.");
+				return;
+			}
+			System.out.println("========================================================================");
+			System.out.println("삭제할 도서 정보");
+			System.out.println(byId);
+			System.out.println();
+			System.out.println("========================================================================");
+			System.out.println("정말 삭제하시겠습니까?(y/n)");
+			String isDelete = scanner.next().toLowerCase();
+			if (!(isDelete.equals("n") || isDelete.equals("y"))) throw new Exception();
+			if (isDelete.equals("y")) bookRepository.delete(id);
+		} catch (Exception e) {
+			System.out.println("잘못된 값이 입력되었습니다.");
+			scanner = new Scanner(System.in);
+		}
+	}
+
+	public void search() {
+		List<Book> result = null;
+		while (true) {
+			try {
+				System.out.println("1. 제목으로 검색 | 2. 작가로 검색 | 3. 장르로 검색 | 4. 모든 책 보기 | 5. 나가기");
+				int orderNo = scanner.nextInt();
+				switch (orderNo) {
+					case 1:
+						System.out.print("검색할 도서의 제목을 입력해주세요.");
+						String title = scanner.next();
+						result = bookRepository.findByTitle(title);
+						break;
+					case 2:
+						System.out.print("검색할 작가의 이름을 입력해주세요.");
+						String writer = scanner.next();
+						result = bookRepository.findByWriter(writer);
+						break;
+					case 3:
+						System.out.print("검색할 도서의 제목을 입력해주세요.");
+						int genreNo = scanner.nextInt();
+						result = bookRepository.findByGenre(genreNo);
+						break;
+					case 4:
+						print(bookRepository.findAll());
+						break;
+					case 5:
+						return;
+					default:
+						throw new Exception();
+				}
+				if (result == null) {
+					System.out.println("검색된 결과가 없습니다.");
+					continue;
+				}
+				print(result);
+				System.out.println("계속 검색하시겠습니까?(y/n)");
+				String isContinue = scanner.next().toLowerCase();
+				if (!(isContinue.equals("n") || isContinue.equals("y"))) throw new Exception();
+				if (isContinue.equals("n")) {
+					return;
+				}
+			} catch (Exception e) {
+				System.out.println("잘못된 값이 입력되었습니다.");
+				scanner = new Scanner(System.in);
+			}
+		}
+
 	}
 }
 		

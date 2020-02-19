@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class BookRentalLog {
 
     private final int seq;
+    private int bookId;
     private String bookTitle;
     private String borrower;
     private LocalDateTime rentalTime;
@@ -20,42 +21,21 @@ public class BookRentalLog {
         this.seq = cnt++;
     }
 
-    public int getSeq() {
-        return seq;
-    }
-    public String getBookTitle() {
-        return bookTitle;
-    }
-    public void setBookTitle(String bookTitle) {
-        this.bookTitle = bookTitle;
-    }
-    public String getBorrower() {
-        return borrower;
-    }
-    public void setBorrower(String borrower) {
-        this.borrower = borrower;
-    }
-    public LocalDateTime getRentalTime() {
-        return rentalTime;
-    }
-    public void setRentalTime(LocalDateTime rentalTime) {
-        this.rentalTime = rentalTime;
-    }
-    public LocalDateTime getReturnTime() {
-        return returnTime;
-    }
-    public void setReturnTime(LocalDateTime returnTime) {
-        this.returnTime = returnTime;
+    public void set(Book book) {
+        this.bookId = book.getId();
+        this.bookTitle = book.getTitle();
+        this.rentalTime = LocalDateTime.now();
     }
 
     @Override
     public String toString() {
         return "["
                 + "대여번호: " + seq
-                + " 책제목: " + bookTitle
-                + " 사용자: " + borrower
-                + " 대여시간: " + rentalTime
-                + " 반납시간: " + returnTime
+                + " | 도서번호: " + bookId
+                + " | 도서제목: " + bookTitle
+                + " | 사용자: " + borrower
+                + " | 대여시간: " + rentalTime
+                + " | 반납시간: " + returnTime
                 + "]";
     }
 }

@@ -1,8 +1,10 @@
 package bookapp;
 
+import bookapp.constant.GenreCode;
+
 public class Book {
 
-	private final int seq;
+	private final int id;
 	private String title;
 	private String writer;
 	private int genre;
@@ -15,7 +17,7 @@ public class Book {
 	}
 
 	public Book()  {
-		this.seq = cnt++;
+		this.id = cnt++;
 		this.isAvailable = true;
 	}
 	
@@ -43,18 +45,18 @@ public class Book {
 	public void setAvailable(boolean available) {
 		isAvailable = available;
 	}
-	public int getSeq() {
-		return seq;
+	public int getId() {
+		return id;
 	}
 
 	@Override
 	public String toString() {
 		return "[" +
-				"대여번호: " + seq
-				+ " 책제목: " + title
-				+ " 저자" + writer
-				+ " 장르: " + genre
-				+ " 대여가능여부: " + isAvailable
+				"도서번호: " + id
+				+ " | 책제목: " + title
+				+ " | 저자: " + writer
+				+ " | 장르: " + GenreCode.getName(genre)
+				+ " | 대여가능여부: " + isAvailable
 				+ "]";
 	}
 

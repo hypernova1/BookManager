@@ -11,12 +11,13 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws InterruptedException {
+
         BookManager bookManager = new BookManager();
         boolean run = true;
         int orderNo;
         while (run) {
             System.out.println("------------------------------------------------------------");
-            System.out.println("1.도서등록 | 2.도서삭제 | 3.도서대여 | 4.도서반납 | 5.도서현황 | 6. 대여이력 | 7.종료");
+            System.out.println("1.도서등록 | 2.도서삭제 | 3.도서대여 | 4.도서반납 | 5.도서검색 | 6. 대여이력 | 7.종료");
             System.out.println("------------------------------------------------------------");
             System.out.print("선택> ");
 
@@ -41,10 +42,11 @@ public class Main {
                     bookManager._return();
                     break;
                 case SystemCode.LIST:
-                    bookManager.printList();
+                    bookManager.search();
                     break;
                 case SystemCode.LOG:
                     bookManager.printRentalLog();
+                    break;
                 case SystemCode.EXIT:
                     run = false;
                     break;
