@@ -66,70 +66,6 @@ public class BookManager {
 		}
 	}
 
-	public void _return() {
-		while(true) {
-			try {
-				List<Book> byAvailable = bookRepository.findByAvailable(false);
-				if (byAvailable == null) {
-					System.out.println("대여중인 도서가 없습니다.");
-					return;
-				}
-				print(byAvailable);
-				System.out.println("반납할 도서의 id를 입력하세요. 모두 반납하시려면 'all'라고 입력해주세요");
-				String selected = scanner.next();
-
-				if (selected.equals("all")) {
-					for (Book book : byAvailable) {
-						book.setAvailable(true);
-					}
-					System.out.println("모든 책이 반납되었습니다.");
-					return;
-				}
-
-				int selectedId = Integer.parseInt(selected);
-				Book byId = bookRepository.findById(selectedId);
-				if (byId.isAvailable()) {
-					System.out.println("반납할 수 없는 도서입니다.");
-					continue;
-				}
-				System.out.println("반납이 완료되었습니다.");
-				return;
-			} catch (Exception e) {
-				System.out.println("잘못된 값이 입력되었습니다.");
-				scanner = new Scanner(System.in);
-			}
-
-		}
-	}
-
-	public void print(List<Book> books) {
-		if (books.size() == 0) {
-			System.out.println("도서 목록이 없습니다.");
-			return;
-		}
-		System.out.println("========================================================================");
-		System.out.println();
-		for (Book book : books) {
-			System.out.println(book.toString());
-		}
-		System.out.println();
-		System.out.println("========================================================================");
-	}
-
-	public void printRentalLog() {
-		if (bookRentalLogs.size() == 0) {
-			System.out.println("대여 이력이 없습니다.");
-			return;
-		}
-		System.out.println("========================================================================");
-		System.out.println();
-		for (BookRentalLog bookRentalLog : bookRentalLogs) {
-			System.out.println(bookRentalLog.toString());
-		}
-		System.out.println();
-		System.out.println("========================================================================");
-	}
-
 	public void rental() {
 		while (true) {
 			try {
@@ -148,15 +84,59 @@ public class BookManager {
 				}
 				book.setAvailable(false);
 
-				System.out.println(book.getTitle() + "를 대여했습니다.");
+				System.out.println(book.getTitle() + "을(를) 대여했습니다.");
 				BookRentalLog bookRentalLog = new BookRentalLog();
-				bookRentalLog.set(book);
+				bookRentalLog.setRental(book);
 				bookRentalLogs.add(bookRentalLog);
 				return;
 			} catch (Exception e) {
 				System.out.println("잘못된 값이 입력되었습니다.");
 				scanner = new Scanner(System.in);
 			}
+		}
+	}
+
+	public void _return() {
+		while(true) {
+			try {
+				List<Book> byAvailable = bookRepository.findByAvailable(false);
+				if (byAvailable == null) {
+					System.out.println("대여중인 도서가 없습니다.");
+					return;
+				}
+				print(byAvailable);
+				System.out.println("반납할 도서의 id를 입력하세요. 모두 반납하시려면 'all'라고 입력해주세요\n나가시려면 'exit'를 입력해주세요.");
+				String selected = scanner.next();
+
+				if (selected.equals("all")) {
+					for (Book book : byAvailable) {
+						book.setAvailable(true);
+						bookRepository.update(book);
+					}
+					System.out.println("모든 책이 반납되었습니다.");
+					return;
+				}
+
+				if (selected.equals("exit")) return;
+
+				int selectedId = Integer.parseInt(selected);
+				Book book = bookRepository.findById(selectedId);
+				if (book.isAvailable()) {
+					System.out.println("반납할 수 없는 도서입니다.");
+					continue;
+				}
+				book.setAvailable(true);
+				bookRepository.update(book);
+				System.out.println("반납이 완료되었습니다.");
+				BookRentalLog bookRentalLog = new BookRentalLog();
+				bookRentalLog.setReturn(book);
+				bookRentalLogs.add(bookRentalLog);
+				return;
+			} catch (Exception e) {
+				System.out.println("잘못된 값이 입력되었습니다.");
+				scanner = new Scanner(System.in);
+			}
+
 		}
 	}
 
@@ -232,6 +212,35 @@ public class BookManager {
 		}
 
 	}
+
+	public void print(List<Book> books) {
+		if (books.size() == 0) {
+			System.out.println("도서 목록이 없습니다.");
+			return;
+		}
+		System.out.println("========================================================================");
+		System.out.println();
+		for (Book book : books) {
+			System.out.println(book.toString());
+		}
+		System.out.println();
+		System.out.println("========================================================================");
+	}
+
+	public void printRentalLog() {
+		if (bookRentalLogs.size() == 0) {
+			System.out.println("대여 이력이 없습니다.");
+			return;
+		}
+		System.out.println("========================================================================");
+		System.out.println();
+		for (BookRentalLog bookRentalLog : bookRentalLogs) {
+			System.out.println(bookRentalLog.toString());
+		}
+		System.out.println();
+		System.out.println("========================================================================");
+	}
+
 }
 		
 

@@ -16,9 +16,11 @@ public class Main {
         boolean run = true;
         int orderNo;
         while (run) {
-            System.out.println("------------------------------------------------------------");
+            System.out.println("------------------------------------------------------------------------");
+            System.out.println();
             System.out.println("1.도서등록 | 2.도서삭제 | 3.도서대여 | 4.도서반납 | 5.도서검색 | 6. 대여이력 | 7.종료");
-            System.out.println("------------------------------------------------------------");
+            System.out.println();
+            System.out.println("------------------------------------------------------------------------");
             System.out.print("선택> ");
 
             try {

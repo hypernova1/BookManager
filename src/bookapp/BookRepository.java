@@ -89,6 +89,7 @@ public class BookRepository {
                 value.setTitle(book.getTitle());
                 value.setWriter(book.getWriter());
                 value.setGenre(book.getGenre());
+                value.setAvailable(book.isAvailable());
                 return true;
             }
         }
