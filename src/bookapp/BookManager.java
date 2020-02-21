@@ -1,18 +1,29 @@
 package bookapp;
 
-import java.util.ArrayList;
+import bookapp.domain.Book;
+import bookapp.domain.BookLog;
+import bookapp.repository.BookRepository;
+import bookapp.repository.BookLogRepository;
+
 import java.util.List;
 import java.util.Scanner;
 
 public class BookManager {
 
 	private Scanner scanner = new Scanner(System.in);
-	private BookRepository bookRepository;
-	private final List<BookRentalLog> bookRentalLogs;
+	private final BookRepository bookRepository;
+	private final BookLogRepository bookLogRepository;
 
-	public BookManager() {
-		this.bookRepository = new BookRepository();
-		this.bookRentalLogs = new ArrayList<>();
+	private static BookManager bookManager;
+
+	private BookManager() {
+		this.bookRepository = BookRepository.getInstance();
+		this.bookLogRepository = BookLogRepository.getInstance();
+	}
+
+	public static BookManager getInstance() {
+		if (bookManager == null) bookManager = new BookManager();
+		return bookManager;
 	}
 
 	public void register() {
@@ -85,9 +96,9 @@ public class BookManager {
 				book.setAvailable(false);
 
 				System.out.println(book.getTitle() + "을(를) 대여했습니다.");
-				BookRentalLog bookRentalLog = new BookRentalLog();
-				bookRentalLog.setRental(book);
-				bookRentalLogs.add(bookRentalLog);
+				BookLog bookLog = new BookLog();
+				bookLog.setRental(book);
+				bookLogRepository.save(bookLog);
 				return;
 			} catch (Exception e) {
 				System.out.println("잘못된 값이 입력되었습니다.");
@@ -128,9 +139,9 @@ public class BookManager {
 				book.setAvailable(true);
 				bookRepository.update(book);
 				System.out.println("반납이 완료되었습니다.");
-				BookRentalLog bookRentalLog = new BookRentalLog();
-				bookRentalLog.setReturn(book);
-				bookRentalLogs.add(bookRentalLog);
+				BookLog bookLog = new BookLog();
+				bookLog.setReturn(book);
+				bookLogRepository.save(bookLog);
 				return;
 			} catch (Exception e) {
 				System.out.println("잘못된 값이 입력되었습니다.");
@@ -228,14 +239,15 @@ public class BookManager {
 	}
 
 	public void printRentalLog() {
-		if (bookRentalLogs.size() == 0) {
+		List<BookLog> bookLogs = bookLogRepository.findAll();
+		if (bookLogs.size() == 0) {
 			System.out.println("대여 이력이 없습니다.");
 			return;
 		}
 		System.out.println("========================================================================");
 		System.out.println();
-		for (BookRentalLog bookRentalLog : bookRentalLogs) {
-			System.out.println(bookRentalLog.toString());
+		for (BookLog bookLog : bookLogs) {
+			System.out.println(bookLog.toString());
 		}
 		System.out.println();
 		System.out.println("========================================================================");

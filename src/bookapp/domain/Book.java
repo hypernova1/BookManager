@@ -1,19 +1,19 @@
-package bookapp;
+package bookapp.domain;
 
 import bookapp.constant.GenreCode;
 
 public class Book {
 
-	private final int id;
+	private final Long id;
 	private String title;
 	private String writer;
 	private int genre;
 	private boolean isAvailable;
 
-	private static int cnt;
+	private static Long cnt;
 
 	static {
-		cnt = 0;
+		cnt = 0L;
 	}
 
 	public Book()  {
@@ -45,7 +45,7 @@ public class Book {
 	public void setAvailable(boolean available) {
 		isAvailable = available;
 	}
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 

@@ -1,15 +1,23 @@
-package bookapp;
+package bookapp.repository;
+
+import bookapp.domain.Book;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookRepository {
+public class BookRepository implements Repository<Book> {
 
+    private static BookRepository bookRepository;
     private final List<Book> books;
 
-    public BookRepository() {
+    private BookRepository() {
         books = new ArrayList<>();
         init();
+    }
+
+    public static BookRepository getInstance() {
+        if (bookRepository == null) bookRepository = new BookRepository();
+        return bookRepository;
     }
 
     private void init() {

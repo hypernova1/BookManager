@@ -2,17 +2,15 @@ package bookapp;
 
 import bookapp.constant.SystemCode;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-    private static Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) throws InterruptedException {
 
-        BookManager bookManager = new BookManager();
+        final BookManager bookManager = BookManager.getInstance();
+        Scanner scanner = new Scanner(System.in);
+
         boolean run = true;
         int orderNo;
         while (run) {
