@@ -1,5 +1,6 @@
 package bookapp;
 
+import bookapp.annotation.Bean;
 import bookapp.annotation.Inject;
 import bookapp.domain.Book;
 import bookapp.domain.BookLog;
@@ -9,6 +10,7 @@ import bookapp.repository.BookRepository;
 import java.util.List;
 import java.util.Scanner;
 
+@Bean
 public class BookManager {
 
 	private Scanner scanner = new Scanner(System.in);

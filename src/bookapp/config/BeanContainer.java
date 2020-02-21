@@ -1,5 +1,6 @@
 package bookapp.config;
 
+import bookapp.annotation.Bean;
 import bookapp.annotation.Inject;
 
 import java.util.Arrays;
@@ -26,10 +27,13 @@ public class BeanContainer {
 
     private static <T> T createInstance(Class<T> classType) {
         try {
-            return classType.getConstructor(null).newInstance();
+            if (Objects.nonNull(classType.getAnnotation(Bean.class))) {
+                return classType.getConstructor(null).newInstance();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
 }

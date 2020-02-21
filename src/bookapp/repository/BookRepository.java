@@ -1,12 +1,12 @@
 package bookapp.repository;
 
-import bookapp.annotation.Inject;
+import bookapp.annotation.Bean;
 import bookapp.domain.Book;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Inject
+@Bean
 public class BookRepository extends SimpleRepository<Book, Long> {
 
     public BookRepository() {
