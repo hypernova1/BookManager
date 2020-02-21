@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public abstract class SimpleRepository<T, ID> implements Repository<T, ID> {
+public abstract class SimpleRepository<T, ID extends Number> implements Repository<T, ID> {
 
     protected List<T> items;
 
@@ -39,12 +39,12 @@ public abstract class SimpleRepository<T, ID> implements Repository<T, ID> {
                 return false;
             }
         }
-        return true;
+        return items.remove(t);
     }
 
     @Override
-    public boolean deleteById(ID id) {
-        return false;
+    public T deleteById(ID id) {
+        return items.remove(id.intValue());
     }
 
     @Override
@@ -54,19 +54,8 @@ public abstract class SimpleRepository<T, ID> implements Repository<T, ID> {
 
     @Override
     public Optional<T> findById(ID id) {
-        for (T item : items) {
-
-            try {
-                Object returnValue = getValueFromField(item.getClass().getDeclaredField("id"), item);
-                String innerValue = String.valueOf(returnValue);
-                if (innerValue.equals(id)) {
-                    return Optional.of(item);
-                }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-        }
-        return Optional.empty();
+        T t = items.get(id.intValue());
+        return Optional.of(t);
     }
 
     private Object getValueFromField(Field field, Object obj) {

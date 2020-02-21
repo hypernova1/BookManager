@@ -67,22 +67,4 @@ public class BookRepository extends SimpleRepository<Book, Long> {
         return result;
     }
 
-    public boolean delete(Book book) {
-        try {
-            super.items.remove(book);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean deleteById(Long id) {
-        try {
-            super.items.remove(id.intValue());
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
 }

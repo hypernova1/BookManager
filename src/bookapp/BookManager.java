@@ -194,7 +194,7 @@ public class BookManager {
 						result = bookRepository.findByGenre(genreNo);
 						break;
 					case 4:
-						print(bookRepository.findAll());
+						result = bookRepository.findAll();
 						break;
 					case 5:
 						return;
@@ -217,7 +217,6 @@ public class BookManager {
 				scanner = new Scanner(System.in);
 			}
 		}
-
 	}
 
 	public void print(List<Book> books) {
