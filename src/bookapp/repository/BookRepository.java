@@ -1,21 +1,16 @@
 package bookapp.repository;
 
+import bookapp.annotation.Inject;
 import bookapp.domain.Book;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Inject
 public class BookRepository extends SimpleRepository<Book, Long> {
 
-    private static BookRepository bookRepository;
-
-    private BookRepository() {
+    public BookRepository() {
         //init();
-    }
-
-    public static BookRepository getInstance() {
-        if (bookRepository == null) bookRepository = new BookRepository();
-        return bookRepository;
     }
 
     private void init() {
@@ -27,7 +22,6 @@ public class BookRepository extends SimpleRepository<Book, Long> {
             super.items.add(book);
         }
     }
-
 
     public List<Book> findByTitle(String title) {
         List<Book> result = new ArrayList<>();

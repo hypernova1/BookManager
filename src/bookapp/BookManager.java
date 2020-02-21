@@ -1,9 +1,10 @@
 package bookapp;
 
+import bookapp.annotation.Inject;
 import bookapp.domain.Book;
 import bookapp.domain.BookLog;
-import bookapp.repository.BookRepository;
 import bookapp.repository.BookLogRepository;
+import bookapp.repository.BookRepository;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,20 +12,11 @@ import java.util.Scanner;
 public class BookManager {
 
 	private Scanner scanner = new Scanner(System.in);
-	private final BookRepository bookRepository;
-	private final BookLogRepository bookLogRepository;
 
-	private static BookManager bookManager;
-
-	private BookManager() {
-		this.bookRepository = BookRepository.getInstance();
-		this.bookLogRepository = BookLogRepository.getInstance();
-	}
-
-	public static BookManager getInstance() {
-		if (bookManager == null) bookManager = new BookManager();
-		return bookManager;
-	}
+	@Inject
+	private BookRepository bookRepository;
+	@Inject
+	private BookLogRepository bookLogRepository;
 
 	public void register() {
 		Book book = new Book();

@@ -1,14 +1,16 @@
 package bookapp;
 
+import bookapp.config.BeanContainer;
 import bookapp.constant.SystemCode;
 
 import java.util.Scanner;
 
 public class Main {
 
+
     public static void main(String[] args) throws InterruptedException {
 
-        final BookManager bookManager = BookManager.getInstance();
+        BookManager bookManager = BeanContainer.getObject(BookManager.class);
         Scanner scanner = new Scanner(System.in);
 
         boolean run = true;
