@@ -81,8 +81,9 @@ public class BookManager {
 		while (true) {
 			try {
 				System.out.println("대여할 도서의 도서번호를 입력해주세요.");
-				int selectedId = scanner.nextInt();
-				Book book = bookRepository.findById(selectedId);
+				long selectedId = scanner.nextLong();
+				Book book = bookRepository.findById(selectedId)
+						.orElse(null);
 
 				if (book == null) {
 					System.out.println("해당 도서가 존재하지 않습니다.");
@@ -130,8 +131,9 @@ public class BookManager {
 
 				if (selected.equals("exit")) return;
 
-				int selectedId = Integer.parseInt(selected);
-				Book book = bookRepository.findById(selectedId);
+				Long selectedId = Long.parseLong(selected);
+				Book book = bookRepository.findById(selectedId)
+						.orElseThrow(() -> new Exception("해당 도서가 없습니다."));
 				if (book.isAvailable()) {
 					System.out.println("반납할 수 없는 도서입니다.");
 					continue;
@@ -154,8 +156,8 @@ public class BookManager {
 	public void remove() {
 		System.out.println("삭제할 도서의 id를 입력해주세요.");
 		try {
-			int id = scanner.nextInt();
-			Book byId = bookRepository.findById(id);
+			long id = scanner.nextLong();
+			Book byId = bookRepository.findById(id).orElse(null);
 			if (byId == null) {
 				System.out.println("헤당 id 값과 일치하는 도서가 없습니다.");
 				return;
@@ -168,7 +170,7 @@ public class BookManager {
 			System.out.println("정말 삭제하시겠습니까?(y/n)");
 			String isDelete = scanner.next().toLowerCase();
 			if (!(isDelete.equals("n") || isDelete.equals("y"))) throw new Exception();
-			if (isDelete.equals("y")) bookRepository.delete(id);
+			if (isDelete.equals("y")) bookRepository.deleteById(id);
 		} catch (Exception e) {
 			System.out.println("잘못된 값이 입력되었습니다.");
 			scanner = new Scanner(System.in);

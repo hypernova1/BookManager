@@ -23,7 +23,6 @@ public class BookLog {
     }
 
     public void setRental(Book book) {
-
         BookLog bookLog = new BookLog();
         bookLog.setBookId(book.getId());
         bookLog.setBookTitle(book.getTitle());
@@ -32,9 +31,7 @@ public class BookLog {
     }
 
     public void setReturn(Book book) {
-
         BookLog bookLog = new BookLog();
-
         bookLog.setBookId(book.getId());
         bookLog.setBookTitle(book.getTitle());
         bookLog.setStatus("반");

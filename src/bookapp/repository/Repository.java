@@ -1,12 +1,15 @@
 package bookapp.repository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface Repository<T> {
+public interface Repository<T, ID> {
 
-    void save(T t);
-    boolean update(T t);
-    boolean delete(Long id);
+    T save(T t);
+    T update(T t);
+    boolean delete(T t);
+    boolean deleteById(ID id);
     List<T> findAll();
+    Optional<T> findById(ID id);
 
 }
