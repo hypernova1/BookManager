@@ -2,10 +2,7 @@ package bookapp.repository;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class SimpleRepository<T, ID extends Number> implements Repository<T, ID> {
 
@@ -17,9 +14,12 @@ public abstract class SimpleRepository<T, ID extends Number> implements Reposito
 
     @Override
     public T save(T t) {
-        for (T item : items) {
-            System.out.println(equalsFieldValue("id", t, item));
-            if (equalsFieldValue("id", t, item)) {
+        if (items.size() == 0) {
+            items.add(t);
+            return t;
+        }
+        for (T item: items) {
+            if (getValueFromField(item, "id") == getValueFromField(t, "id")) {
                 return null;
             }
         }
@@ -34,17 +34,14 @@ public abstract class SimpleRepository<T, ID extends Number> implements Reposito
 
     @Override
     public boolean delete(T t) {
-        for (T item : items) {
-            if (!equalsFieldValue("id", t, item)) {
-                return false;
-            }
-        }
+        if (items.size() == 0) return false;
         return items.remove(t);
     }
 
     @Override
-    public T deleteById(ID id) {
-        return items.remove(id.intValue());
+    public boolean deleteById(ID id) {
+        T t = items.remove(id.intValue());
+        return t != null;
     }
 
     @Override
@@ -58,8 +55,14 @@ public abstract class SimpleRepository<T, ID extends Number> implements Reposito
         return Optional.of(t);
     }
 
-    private Object getValueFromField(Field field, Object obj) {
-        Class<?> clazz = obj.getClass();
+    private Object getValueFromField(T t, String fieldName) {
+        Class<?> clazz = t.getClass();
+        Field field = null;
+        try {
+            field = clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
         for (Method method : clazz.getMethods()) {
             String methodName = method.getName();
             if ((methodName.startsWith("get") && methodName.length() == field.getName().length() + 3)
@@ -67,7 +70,7 @@ public abstract class SimpleRepository<T, ID extends Number> implements Reposito
 
                 if (methodName.toLowerCase().endsWith(field.getName().toLowerCase())) {
                     try {
-                        return method.invoke(obj);
+                        return method.invoke(t);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -75,25 +78,5 @@ public abstract class SimpleRepository<T, ID extends Number> implements Reposito
             }
         }
         return null;
-    }
-
-    private boolean equalsFieldValue(String fieldName, T t, T t2) {
-        Class<?> vo = t2.getClass();
-        Field field = null;
-        try {
-            field = vo.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-
-        String idStr = (String) getValueFromField(field, vo);
-        for (T item : items) {
-            Class<?> vo2 = item.getClass();
-            String idStr2 = (String) getValueFromField(field, vo2);
-            if (Objects.equals(idStr, idStr2)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

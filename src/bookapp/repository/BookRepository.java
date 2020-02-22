@@ -10,7 +10,7 @@ import java.util.List;
 public class BookRepository extends SimpleRepository<Book, Long> {
 
     public BookRepository() {
-        //init();
+        init();
     }
 
     private void init() {
